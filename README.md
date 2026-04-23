@@ -39,6 +39,26 @@ use $wf and update the architecture for subsystem Y
 use $wf and debug the current check-in flow
 ```
 
+## Common Use Cases
+
+- New project bootstrap
+  - `use $wf, I'm starting a new project for ...`
+- Existing project catch-up
+  - `use $wf and review this repo`
+  - `use $wf and catch me up on this project`
+- Planning
+  - `use $wf and plan feature X`
+  - `use $wf and break this into tasks`
+- Implementation
+  - `use $wf and implement feature X`
+  - `use $wf and fix bug Y`
+- Architecture updates
+  - `use $wf and update the architecture for subsystem Y`
+  - `use $wf and document this repo structure`
+- Review and debugging
+  - `use $wf and review this change`
+  - `use $wf and debug the current check-in flow`
+
 ## What It Does
 
 - treats `ARCHITECTURE/current/` as canonical
