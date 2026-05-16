@@ -62,13 +62,7 @@ ARCHITECTURE/
 
 Use `ARCHITECTURE/current/subsystems/README.md` as the subsystem index and naming guide.
 
-Create `ARCHITECTURE/current/subsystems/<bounded-behavior>.md` only when an area has meaningful behavior or complexity. Name subsystem docs by behavior boundary, not vague buckets. Use `references/subsystem-doc-template.md` for the content shape.
-
-Prefer a few useful subsystem docs over many tiny files. A medium app often starts with roughly 4-8 subsystem docs, then expands only when work repeatedly needs more detail.
-
-Use `references/subsystem-planning-rules.md` when deciding subsystem granularity, code ownership, public APIs, import rules, test strategy, or subsystem-by-subsystem refactor order.
-
-Do not create subsystem docs per function, hook, widget, or UI page by default. A page or device capability becomes a subsystem only when it owns a real workflow, lifecycle, state, data contract, dependencies, or test surface.
+Create `ARCHITECTURE/current/subsystems/<bounded-behavior>.md` only when an area has meaningful behavior or complexity. Use `references/subsystem-planning-rules.md` for subsystem granularity, ownership, import, and test rules. Use `references/subsystem-doc-template.md` for the content shape.
 
 ## ADRs And Logs
 
@@ -99,16 +93,6 @@ Project Orchestrator supports this sequence without adding new commands:
 3. Project Orchestrator turns accepted milestone scope into session-sized `TODO.md` entries.
 4. Code-manager guidance owns detailed code organization, imports, public APIs, tests, refactors, and implementation loops.
 5. Project Orchestrator records completed outcomes in `LOG.md` and updates docs only when project truth changes.
-
-## Update Boundaries
-
-- Update `01-project-intent.md` when product goals, target customer, core problem, value proposition, product principles, users, scope, non-goals, constraints, stable success direction, or current phase changes.
-- Update `02-milestones.md` when MVP/V1, Post-MVP/V1.x, Future/V2+, roadmap direction, milestone direction, phase direction, final-product direction, MVP user journey, page capability scope, required controls, required states, or acceptance signal changes.
-- Update `03-overall-system-design.md` when system boundaries, ownership, data flow, dependencies, runtime shape, or shared terminology changes.
-- Update `04-overall-ui-design.md` when UI design direction, visual language, navigation, layout patterns, interaction conventions, responsive/accessibility expectations, or screenshot/prompt-derived UI decisions change.
-- Update `05-repo-map.md` when entrypoints, folder responsibilities, module ownership, generated code, or doc-to-code mapping changes.
-- Update a subsystem doc when one bounded behavior area's flows, states, dependencies, code map, known gaps, or extension points change.
-- Add an ADR when the reason behind an architecture decision matters beyond the current session.
 
 ## Bootstrap And Retrofit Checklist
 

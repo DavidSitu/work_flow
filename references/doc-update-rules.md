@@ -9,16 +9,7 @@ Use a two-layer architecture model by default:
 - top-level docs for cross-cutting truth
 - subsystem docs for bounded behavior areas
 
-Stop at subsystem-level by default. Do not create per-function docs unless a function is unusually critical or complex.
-
-For a medium or large app, prefer a small set of real subsystem docs before creating more. A good starting point is often 4-6 subsystem docs, not dozens of micro-docs.
-
-Avoid too many tiny docs because they increase:
-
-- file chasing
-- duplicated facts
-- doc drift
-- the chance that one focused task requires opening many files
+Use `references/subsystem-planning-rules.md` for subsystem granularity, ownership, import, and test decisions. Do not duplicate those rules here.
 
 ## Top-Level Docs
 
@@ -44,7 +35,7 @@ Keep the `02` and `04` split clear: `02` says what the MVP UI must functionally 
 
 ## Subsystem Docs
 
-Use `references/subsystem-planning-rules.md` when subsystem granularity, code ownership, import direction, or test strategy is part of the decision.
+Use `references/subsystem-planning-rules.md` when deciding whether a subsystem doc should exist or how its code/test boundaries should work.
 
 Create or update a subsystem doc when a change affects one specific area's:
 
@@ -58,42 +49,7 @@ Create or update a subsystem doc when a change affects one specific area's:
 - known gaps
 - safe extension points
 
-Create a subsystem doc only when the area has one or more of these:
-
-- meaningful business logic
-- multiple modules or code paths
-- important states or transitions
-- backend and frontend interaction
-- non-obvious constraints or likely future expansion
-- independently testable behavior
-- owned data, storage, device capability, API contract, or job
-
-Name subsystem docs by bounded behavior, not vague buckets.
-
-Prefer:
-
-- `auth-session-and-timezone`
-- `companion-lifecycle-and-reveal`
-
-Avoid vague buckets such as:
-
-- `login-system`
-- `pet-system`
-
-The goal is to name the behavior boundary a contributor actually needs to understand. Do not group unrelated behavior into one vague subsystem doc.
-
-Do not create subsystem docs by default for:
-
-- one function
-- one hook
-- one helper
-- one UI component
-- one UI page that only renders a view
-- a folder that is only an implementation bucket
-
-A UI page can be a subsystem only when it owns a real workflow, state machine, data contract, lifecycle, or cross-layer behavior. Otherwise, document it inside the subsystem that owns the workflow.
-
-Split a subsystem when it has distinct ownership, state, data, dependencies, failure modes, or tests. Merge or avoid splitting when two areas always change together, cannot be tested alone, or would create circular/chattering dependencies.
+Name subsystem docs by bounded behavior, not vague buckets. Do not create subsystem docs for individual functions, hooks, helpers, widgets, or pages unless `references/subsystem-planning-rules.md` justifies the boundary.
 
 For a focused task, the ideal documentation read set is usually:
 

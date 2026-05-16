@@ -11,7 +11,7 @@ Use this reference when `$po` implementation coordination needs detailed code or
 - milestone direction
 - ADR triggers
 
-The future separate `code-manager` skill should own coding execution details:
+The separate `code-manager` skill owns coding execution details:
 
 - physical file layout
 - file naming

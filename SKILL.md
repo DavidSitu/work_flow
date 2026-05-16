@@ -7,9 +7,10 @@ description: Explicit $po Project Orchestrator workflow for Codex. Use only when
 
 Use this skill only when the user explicitly invokes `$po` or clearly asks for the project workflow. Keep normal chat, writing, and reasoning unstructured when this skill is not requested.
 
-## Core Defaults
+## Operating Principles
 
 - Treat the Project Orchestrator workflow as per-turn project mode, not a permanent conversation mode.
+- Classify the request first, then run only the relevant path.
 - Default to read-only catch-up, planning, or explanation unless the user explicitly asks to create, update, implement, refactor, normalize, retrofit, or otherwise change files.
 - Assume Project Orchestrator usually starts after the user has accepted the business direction, rough function scope, and UI/design direction. Convert that accepted input into repo-operational structure.
 - Clarify missing product, function, UI, or technical intent only when needed to write useful architecture docs, milestones, subsystem boundaries, or session plans.
@@ -17,30 +18,25 @@ Use this skill only when the user explicitly invokes `$po` or clearly asks for t
 - Use `ARCHITECTURE/current/` as the canonical documentation set.
 - Do not read `ARCHITECTURE/archive/` unless the user explicitly asks for historical context, migration history, or past reasoning.
 - Read only the relevant docs and code for the task. Do not load the whole architecture tree by default.
-- Use progressive read discipline: focused tasks stay narrow, but broad architecture requests must read broadly enough to preserve project-level judgment.
-- For `$po arche` requests such as global view, overall architecture, whole project direction, MVP plan, final product direction, or broad subsystem boundaries, use a Global Arche Read across the relevant `ARCHITECTURE/current/` docs. Do not apply a hard reference-file cap to these broad architecture requests.
 - Documentation guides understanding. Runtime code is still the final source of truth for actual behavior.
 - Treat `TODO.md` as the active session queue, not a backlog.
 - Treat `LOG.md` as the completed-session record, not a transcript or changelog.
-- Use the Project Orchestrator session tracking standard in `references/session-tracking.md` when creating, normalizing, or updating `TODO.md` and `LOG.md`.
 - Treat session boundaries as the only time to roll tracking forward: when a session is complete or reaches a meaningful stopping point, write the matching `LOG.md` entry and close out or carry forward the matching `TODO.md` session.
 - Keep tracking lightweight. Do not rewrite `TODO.md` after each small edit or partial check-in.
 - Treat milestones as product and architecture direction, not execution sessions or a `TODO.md` backlog.
 - Build milestones through detailed TODO sessions. A milestone is complete only when the implementation sessions derived from it are finished, verified, and recorded.
 - Treat `$po arche` as shorthand for converting accepted product/UI/function direction into architecture docs, lightweight milestone direction, and subsystem boundaries.
 - Treat `$po retrofit` as shorthand for restoring or normalizing the standard Project Orchestrator structure in an existing repository.
-- When the user provides a whole idea document at Project Orchestrator startup, distill it into durable architecture docs instead of treating it as loose notes. Keep a rich cleaned version of accepted product intent in `01-project-intent.md`; do not store the raw full brief by default.
 - Use the standard architecture folder contract in `references/architecture-structure.md` when bootstrapping, retrofitting, or updating architecture docs.
-- Use a two-layer architecture doc model by default: top-level docs for cross-cutting truth, subsystem docs for bounded behavior.
-- Stop at subsystem-level by default. Do not split architecture into per-function docs unless a function is unusually critical or complex.
-- Treat a subsystem as a bounded behavior area that owns meaningful code, state, interfaces, dependencies, and tests.
-- Do not create subsystem docs per function, hook, widget, or UI page by default; a page or device capability becomes a subsystem only when it owns a real workflow or lifecycle.
+- Use `references/doc-update-rules.md` to decide which architecture doc changes.
+- Use `references/session-tracking.md` when creating, normalizing, or updating `TODO.md` and `LOG.md`.
+- Treat subsystems as bounded behavior areas. Use `references/subsystem-planning-rules.md` for detailed granularity, ownership, import, and test rules.
 - Session size does not determine file size. Coordinate session work around the correct subsystem or module; do not create one file per function or one file per checklist item.
-- Use `references/subsystem-planning-rules.md` when planning subsystem boundaries, repo layout, import rules, test ownership, or subsystem-by-subsystem refactors.
+- Use `references/code-manager-integration.md` when code organization, implementation, refactor, test placement, diagnosis, or focused verification is involved.
 
 ## Request Classification
 
-Classify the request first, then run only the relevant path:
+Run only the path that matches the user's request:
 
 1. `bootstrap-new-project`
 2. `retrofit-existing-project`
@@ -55,6 +51,18 @@ Treat `$po arche` as shorthand for `architecture-update`.
 
 Do not edit files just because the skill was activated. Activation loads the operating procedure; the user request chooses the path.
 
+## Routing Table
+
+| User intent | Path | Primary references |
+| --- | --- | --- |
+| Start the workflow in a new repo | `bootstrap-new-project` | `architecture-structure.md`, `session-tracking.md` |
+| Adopt or restore workflow in an existing repo | `retrofit-existing-project` | `retrofit-rules.md`, `architecture-structure.md`, `session-tracking.md` |
+| Understand current repo state | `catch-up-existing-project` | Relevant current docs, code, tests |
+| Update architecture, milestones, repo map, or subsystem docs | `architecture-update` | `architecture-structure.md`, `doc-update-rules.md`, plus milestone or subsystem refs when relevant |
+| Break work into sessions | `planning` | `planning-rules.md`, `session-tracking.md` |
+| Coordinate a concrete build/change | `implementation-coordination` | `code-manager-integration.md`, relevant docs/code/tests |
+| Review, diagnose, or debug | `review-debugging` | Relevant current docs, code, tests; `planning-rules.md` for review shape |
+
 ## Default Read Order
 
 For real project work, read in this order when relevant:
@@ -68,6 +76,8 @@ For real project work, read in this order when relevant:
 7. The actual code paths touched by the task
 
 Skip files that do not exist or are not needed for the current path.
+
+Use progressive read discipline: focused tasks stay narrow, but broad architecture requests must read broadly enough to preserve project-level judgment.
 
 For a Global Arche Read, read enough current architecture context to reason about the whole project:
 
@@ -90,7 +100,7 @@ For a focused task, the ideal read set is usually:
 
 If one task requires many scattered top-level docs, consolidate subsystem detail instead of multiplying cross-cutting files.
 
-## Paths
+## Path Contracts
 
 ### bootstrap-new-project
 
@@ -109,10 +119,7 @@ Use when the user wants to adopt the Project Orchestrator workflow in the middle
 - Inspect the existing repo shape, docs, and workflow files first.
 - Preserve useful existing content by default instead of replacing it.
 - Create missing standard Project Orchestrator files and folders only where needed.
-- Normalize tracking and architecture structure conservatively when existing files are nonstandard.
-- Normalize tracking files against `references/session-tracking.md`.
-- Normalize architecture docs against `references/architecture-structure.md`.
-- Seed `TODO.md` in the current session-based format.
+- Normalize tracking and architecture structure conservatively against the relevant references when existing files are nonstandard.
 - Add a short `LOG.md` entry only after the retrofit work is meaningfully complete.
 - See `references/retrofit-rules.md` for detailed retrofit and migration guidance.
 
@@ -131,21 +138,14 @@ Use when the user wants to convert accepted product direction, rough function sc
 
 - Read only the affected current docs.
 - Use Global Arche Read when the request is broad: global view, overall architecture, whole project direction, MVP plan, final product direction, repo structure, or broad subsystem boundaries.
-- Read `references/architecture-structure.md` for the standard file roles and folder contract.
-- Read `references/subsystem-planning-rules.md` when the request involves subsystem granularity, code ownership, test boundaries, import direction, or repo layout.
+- Read `references/architecture-structure.md` for the standard folder contract.
+- Read `references/doc-update-rules.md` when deciding which architecture doc to update.
+- Read `references/subsystem-planning-rules.md` when the request involves subsystem granularity, ownership, import direction, test strategy, or repo layout.
 - Read `references/milestone-planning.md` when accepted direction includes MVP / V1, Post-MVP / V1.x, optional Future / V2+, roadmap, milestone, phase, or final-product direction.
 - Inspect code if needed to confirm runtime truth.
 - Use a planning-first workflow when architecture intent is unclear or the request involves major tradeoffs.
-- Clarify the architecture scope first: overall system, top-level docs, or one subsystem.
-- Confirm only missing project goal, target users, scope, constraints, system type, current milestone, desired documentation depth, or ADR needs that cannot be learned from the provided plan, current docs, or code.
-- If the user provides an initial idea document, preserve rich accepted product intent in `ARCHITECTURE/current/01-project-intent.md` and distribute the rest into `02-05` by responsibility.
-- Keep stable project target content, target customer, core problem, value proposition, product principles, constraints, and success direction in `ARCHITECTURE/current/01-project-intent.md`.
-- Keep milestone summaries compact in `ARCHITECTURE/current/02-milestones.md`; MVP scope may include user journey flow, page-level capabilities, required buttons/controls, required states, and acceptance signals.
-- Keep UI visual style, navigation, layout patterns, interaction conventions, responsive/accessibility expectations, and screenshot/prompt-derived UI decisions in `ARCHITECTURE/current/04-overall-ui-design.md`.
-- Plan or revise subsystem boundaries and top-level architecture structure when needed.
-- For subsystem planning, define bounded behavior, owned code, public API, internal files, dependency direction, data ownership, and test strategy.
+- Clarify only missing project goal, target users, scope, constraints, system type, current milestone, desired documentation depth, or ADR needs that cannot be learned from the provided plan, current docs, or code.
 - Update only the relevant architecture files.
-- Prefer bounded subsystem docs over many small fragmented documents.
 - Do not touch `archive/` unless the request is explicitly historical.
 
 ### planning
@@ -158,11 +158,8 @@ Use when the user asks for task planning, breakdown, or sequencing.
 - Read `references/session-tracking.md` before creating or rewriting session entries in `TODO.md`.
 - Refine `TODO.md` using dated session sections instead of a long undifferentiated task list.
 - If planning from milestones, derive only current and near-next executable sessions from the active milestone.
-- If a task spans multiple systems or would take multiple sittings, split it into sequenced sessions.
-- Prefer session slices that touch one subsystem or one clearly named cross-subsystem integration.
 - Update architecture docs only if product or system truth changes.
-
-See `references/planning-rules.md` for task slicing and review guidance.
+- See `references/planning-rules.md` for task slicing and review guidance.
 
 ### implementation-coordination
 
@@ -174,7 +171,6 @@ Use when the user asks `$po` to build or change a concrete behavior. Project Orc
 - If the task is too large for one focused session, split it into the next session entries in `TODO.md`.
 - Coordinate only what the current session needs; avoid expanding the work into a backlog or unrelated refactor.
 - Read `references/code-manager-integration.md` when the task needs file organization, import cleanup, public API design, test placement, TDD, diagnosis, refactoring, or focused code verification.
-- Keep docs and session tracking aligned with the code-manager/subsystem contract instead of duplicating full coding rules in Project Orchestrator.
 - Define the smallest useful verification, preferring subsystem-local tests before broader integration tests.
 - Read `references/session-tracking.md` before moving session outcomes from `TODO.md` to `LOG.md`.
 - Update `LOG.md` using the same date and session ID when a session is completed or reaches a meaningful stopping point.
@@ -187,6 +183,49 @@ Use when the user asks for review, diagnosis, or debugging.
 - Compare intended behavior vs actual behavior.
 - Return findings first for review tasks.
 - Update docs or tracking only if the user asks or the current truth clearly changed.
+
+## Output Contracts
+
+For `bootstrap-new-project` and `retrofit-existing-project`, report:
+
+- files created or normalized
+- useful content preserved
+- gaps or follow-up sessions still needed
+
+For `catch-up-existing-project`, report:
+
+- current state
+- gaps and risks
+- likely next sessions
+
+For `architecture-update`, report:
+
+- architecture scope
+- files changed or proposed
+- decisions made
+- unresolved questions or ADR needs
+
+For `planning`, report:
+
+- active milestone when relevant
+- affected subsystem or behavior area
+- session-sized TODO entries
+- verification target per session
+
+For `implementation-coordination`, report:
+
+- affected subsystem
+- current session scope
+- code-manager handoff points
+- verification target
+- `LOG.md` update only after completion or meaningful stop
+
+For `review-debugging`, report:
+
+- findings first, ordered by severity
+- concrete evidence from docs, code, tests, or runtime behavior
+- open questions or assumptions
+- verification gaps
 
 ## Reference Files
 

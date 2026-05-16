@@ -1,198 +1,94 @@
 # Project Orchestrator
 
-`Project Orchestrator` is an explicit accepted-plan-to-repo skill for Codex. It is designed for repository work that needs structured catch-up, retrofit, architecture maintenance, milestone/session planning, implementation coordination, and lightweight tracking without making that workflow always-on.
+`Project Orchestrator` is an explicit accepted-plan-to-repo skill for Codex. It adds structured repository workflow only when invoked with `$po`.
 
-The explicit trigger is `$po`.
+Use it for:
 
-## Why It Exists
+- bootstrapping `ARCHITECTURE/`, `TODO.md`, and `LOG.md`
+- retrofitting an existing repo into the Project Orchestrator structure
+- catching up on current repo state
+- converting accepted product, function, and UI direction into architecture docs
+- planning milestones and session-sized work
+- coordinating implementation handoff to `code-manager`
+- reviewing or debugging current behavior
 
-This skill keeps normal chat and writing unstructured by default, then adds a predictable project workflow only when you ask for it.
-
-Use it when you want Codex to:
-
-- bootstrap docs and tracking for a new project
-- retrofit an existing repo into the standard Project Orchestrator structure
-- catch up on an existing repo
-- update architecture docs or plan the overall architecture
-- translate accepted MVP/V1/Post-MVP/Future/final-product direction into architecture milestones
-- plan subsystem-first code organization, import boundaries, and test ownership
-- plan tracked work
-- coordinate scoped implementation sessions
-- review or debug current behavior
+Do not use it as a general chat, product exploration, or business strategy mode.
 
 ## Install
 
 This README is source-repo documentation. Do not include it in the installed skill payload.
 
-Install only the skill payload files:
+Install only:
 
-- `SKILL.md`
-- `agents/openai.yaml`
-- `references/`
-- optional `assets/` or `scripts/` if added later
+```text
+SKILL.md
+agents/openai.yaml
+references/
+```
 
-Copy those payload files to:
+Copy the payload to:
 
 ```text
 ~/.codex/skills/po/
 ```
 
-The internal skill name is lowercase `po` for validator compatibility. The UI display name can appear as `Project Orchestrator`.
+The skill name is `po`; the user-facing trigger is `$po`.
 
 ## Usage
-
-Examples:
 
 ```text
 use $po, I'm starting a new project for ...
 use $po retrofit
 use $po arche
 use $po arche and plan the V1 milestones
-use $po arche and split the final goal into V1/V2 milestones
-use $po and review this repo
+use $po and catch me up on this repo
 use $po and split this into sessions
 use $po and plan feature X
-use $po arche and plan the overall architecture
-use $po and update the architecture for subsystem Y
+use $po and implement feature X
+use $po and review this change
 use $po and debug the current check-in flow
 ```
 
-## Common Use Cases
-
-- New project bootstrap
-  - `use $po, I'm starting a new project for ...`
-- Existing project retrofit
-  - `use $po retrofit`
-  - `use $po retrofit this repo`
-- Existing project catch-up
-  - `use $po and review this repo`
-  - `use $po and catch me up on this project`
-- Planning
-  - `use $po and plan feature X`
-  - `use $po and break this into tasks`
-- Implementation
-  - `use $po and implement feature X`
-  - `use $po and fix bug Y`
-- Architecture updates
-  - `use $po arche`
-  - `use $po arche and plan the overall architecture`
-  - `use $po arche and plan the V1 milestones`
-  - `use $po arche and split the final goal into V1/V2 milestones`
-  - `use $po and update the architecture for subsystem Y`
-  - `use $po and document this repo structure`
-- Review and debugging
-  - `use $po and review this change`
-  - `use $po and debug the current check-in flow`
-
-## What It Does
-
-- treats `ARCHITECTURE/current/` as canonical
-- avoids `ARCHITECTURE/archive/` by default
-- reads only the relevant docs and code for the task
-- can restore or normalize `TODO.md`, `LOG.md`, and `ARCHITECTURE/current/` in an existing repo when asked
-- uses a standard architecture folder contract for project intent, system design, UI design, repo mapping, subsystem docs, and optional ADRs
-- can translate compact MVP/V1, Post-MVP/V1.x, optional Future/V2+, and final-product direction into architecture milestones
-- treats subsystems as bounded behavior areas that own code, state, public interfaces, dependencies, and tests
-- avoids creating subsystem docs for every function, hook, widget, helper, or UI page by default
-- supports subsystem-by-subsystem refactor planning with public APIs, import rules, and local verification
-- uses `TODO.md` and `LOG.md` as the Project Orchestrator session tracking standard for current work, completed sessions, and handoff notes
-- prefers subsystem-level architecture docs over overly fragmented micro-docs
-
-## What It Does Not Do
-
-- it is not a permanent always-on mode
-- it does not read the full architecture tree by default
-- it does not replace code inspection with documentation
-- it does not turn `TODO.md` into a long backlog
-- it does not store full roadmaps in `TODO.md`
-- it does not create business, promotion, GTM, `PRODUCT/`, or `05-roadmap.md` docs in the current version
-- it does not treat `TODO.md` or `LOG.md` as an industry standard; they are Project Orchestrator's lightweight repo-local tracking convention
-- it does not encourage per-function architecture docs by default
-- it does not make every UI page, component, hook, helper, or device button its own subsystem unless it owns meaningful workflow, lifecycle, state, data, dependencies, and tests
-
-`$po arche` is the shorthand for converting accepted product, function, and UI direction into architecture docs, lightweight milestone direction, and subsystem boundaries. It should be planning-first when architecture direction is unclear, and direct-edit when the requested architecture change is already clear. Use `$po retrofit` to adopt the Project Orchestrator structure in an existing project by creating or normalizing `TODO.md`, `LOG.md`, and `ARCHITECTURE/current/` without treating the repo as a brand-new project.
-
-## Milestone Planning
-
-Project Orchestrator keeps stable project target content in `ARCHITECTURE/current/01-project-intent.md` and compact milestone direction in `ARCHITECTURE/current/02-milestones.md`:
-
-- `MVP / V1`: first coherent user-facing product version or smallest value-proving version
-- `Post-MVP / V1.x`: near-term post-V1 improvements that should not block V1
-- `Future / V2+`: larger product generations used only for meaningful capability jumps
-- `Final Product Direction`: long-term north star, not a committed backlog
-
-Use the fewest milestone versions needed to make the roadmap clear. Milestones guide architecture and session planning. `TODO.md` should still contain only current and near-next executable sessions.
-
-`02-milestones.md` may stay very short for small projects. Its role is product and architecture phase direction, not backlog, GTM, business planning, or a second TODO file.
-
-A milestone is not complete because the milestone doc exists. It is complete when the TODO sessions derived from it are implemented, verified, and recorded in `LOG.md`.
-
-Use this mapping:
+## Workflow Model
 
 ```text
-Milestone = product capability direction
-TODO session = one testable slice of that capability
-Module/file = one coherent ownership boundary
-Function = internal behavior inside that module
-Test = proof
-LOG = completion record
+accepted direction -> ARCHITECTURE/current/ -> milestones -> TODO sessions -> implementation coordination -> LOG
 ```
 
-Build milestones through detailed TODO sessions, but organize code by ownership boundaries, not by checklist items. Do not create one file per function or one file per TODO checkbox.
+Ownership split:
 
-## Session Tracking
+- `$po` owns project direction, architecture truth, milestones, `TODO.md`, `LOG.md`, and session coordination.
+- `code-manager` owns file layout, code changes, imports, APIs, tests, refactors, diagnosis, and focused verification.
+- Runtime code remains the source of truth for actual behavior.
 
-Project Orchestrator uses a session tracking convention for agent work:
+## Standard Project Files
 
-- `TODO.md` is the active session queue, organized by `YYYY-MM-DD` and `S1`, `S2`, `S3` session headings.
-- `LOG.md` is the completed-session record, using the same dates and session IDs with concise outcome summaries.
-- `TODO.md` should stay short and focused on current or near-next sessions.
-- `LOG.md` should record useful completed outcomes, verification, decisions, blockers, and handoff notes.
-- ADRs in `ARCHITECTURE/decisions/` record architecture decisions, not session history.
+```text
+ARCHITECTURE/
+  README.md
+  current/
+    01-project-intent.md
+    02-milestones.md
+    03-overall-system-design.md
+    04-overall-ui-design.md
+    05-repo-map.md
+    subsystems/
+  decisions/
+  archive/
+TODO.md
+LOG.md
+```
 
-## Recommended Architecture Doc Model
+`ARCHITECTURE/current/` is canonical. `TODO.md` is the active session queue. `LOG.md` is the completed-session record.
 
-Use a two-layer architecture model:
+## Reference Map
 
-- top-level docs for cross-cutting truth
-- subsystem docs for bounded behavior areas
-
-A subsystem should be large enough to test and reason about independently, but not so large that unrelated behavior is grouped together. For a medium app, start with roughly 4-8 subsystem candidates and expand only when repeated work proves the boundary needs its own doc and ownership contract.
-
-The standard current architecture set is:
-
-- `ARCHITECTURE/README.md`: thin index, reading order, and folder meanings
-- `ARCHITECTURE/current/01-project-intent.md`: stable project target, goals, users, scope, non-goals, constraints, phase, and success direction
-- `ARCHITECTURE/current/02-milestones.md`: compact MVP/V1, Post-MVP/V1.x, optional Future/V2+, and final-product direction when needed
-- `ARCHITECTURE/current/03-overall-system-design.md`: system boundaries, responsibilities, data flow, dependencies, and terminology
-- `ARCHITECTURE/current/04-overall-ui-design.md`: UI surfaces, navigation, key user flows, state relationships, and accessibility; may be marked `N/A`
-- `ARCHITECTURE/current/05-repo-map.md`: folder ownership, entrypoints, module responsibilities, and doc-to-code mapping
-- `ARCHITECTURE/current/subsystems/*.md`: bounded behavior docs using the subsystem template
-- `ARCHITECTURE/decisions/`: optional ADRs for important architecture decisions
-
-Subsystem docs should capture ownership, public entrypoints, internal files, import rules, data ownership, test strategy, known gaps, and safe extension points.
-
-`ARCHITECTURE/README.md` should remain navigation only. It should not duplicate project goals, milestone details, system design, subsystem behavior, or implementation TODOs.
-
-For a focused task, the ideal read set is usually:
-
-- `01-project-intent.md` only if product intent matters
-- `02-milestones.md` only if roadmap, phase, milestone, or session planning depends on it
-- one relevant top-level doc
-- one relevant subsystem doc
-- `05-repo-map.md` only when code location is needed
-
-If one task repeatedly needs many scattered top-level docs, consolidate the detailed behavior into a subsystem doc instead.
-
-## Example Subsystem Taxonomy
-
-These are examples of good subsystem slicing, not required filenames:
-
-- `auth-session-and-timezone`
-- `wake-flow-and-checkin`
-- `room-risk-and-atonement`
-- `companion-lifecycle-and-reveal`
-- `offline-queue-and-lifecycle`
-- `room-membership-and-joins`
-
-The naming principle is to describe the bounded behavior a contributor actually needs to understand, not to create vague buckets or one doc per tiny unit.
+- `architecture-structure.md`: standard architecture folder contract
+- `doc-update-rules.md`: which architecture doc should change
+- `milestone-planning.md`: MVP/V1/Post-MVP/Future/final-product direction
+- `session-tracking.md`: `TODO.md` and `LOG.md` format
+- `planning-rules.md`: session slicing and review shape
+- `retrofit-rules.md`: existing repo adoption and preservation
+- `subsystem-planning-rules.md`: subsystem boundaries, ownership, imports, and tests
+- `subsystem-doc-template.md`: subsystem doc template
+- `code-manager-integration.md`: handoff to `code-manager`
